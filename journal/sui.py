@@ -4,15 +4,17 @@ import calendar
 import sounddevice as sd
 import os
 
-from app import runner
-
+from app import runner, runner_suggested_actions
 
 # Placeholder for your LLM function
-
 def llm_function(file_path):
     # Implement LLM logic here with the file path
     response = runner(file_path)
-    st.write(f"Response: {response}")
+    return response
+
+def suggested_actions(llm_response):
+    response = runner_suggested_actions(llm_response=llm_response)
+    return response
 
 # Record Audio function
 def record_audio():
@@ -35,6 +37,7 @@ def record_audio():
             st.session_state["recording"] = True
             st.session_state["audio_data"] = start_recording()
 
+
 def start_recording():
     """Start recording audio."""
     p = sd.PyAudio()
@@ -51,6 +54,7 @@ def start_recording():
     stream.close()
     p.terminate()
     return b"".join(frames)
+
 
 def upload_audio():
     """Upload an audio file, save it with a timestamp and return the file path."""
@@ -73,7 +77,9 @@ def upload_audio():
         return temp_audio_path
 
     return None
-# Upload Audio function
+
+
+# Save Audio function
 def save_audio(audio_data):
     """Save recorded audio to a file in the 'audio/' directory with a timestamp and mp3 extension."""
     # Ensure the 'audio/' directory exists
@@ -91,11 +97,31 @@ def save_audio(audio_data):
         f.write(audio_data)
 
     return temp_file_path
+
+
 # Submit Audio and Log the Path
 def submit_audio(audio_file_path):
     st.info("Submitting the audio file.")
     st.write(f"Audio file submitted: {audio_file_path}")
-    llm_function(audio_file_path)  # Pass the file path to your LLM function
+    llm_response = llm_function(audio_file_path)  # Pass the file path to your LLM function
+    suggested_actions_response = suggested_actions(llm_response)
+
+    # Render LLM response on the main screen (not in sidebar)
+    st.subheader("Muse Says")
+    if llm_response:
+        st.write("Summary:", llm_response.get("summary"))
+        st.write("Emotion:", llm_response.get("emotion", ""))
+        st.subheader("Suggested Actions:")
+        for key, value in suggested_actions_response.items():
+            if isinstance(value, list):
+                st.write("\n Exercises")
+                for i,v in enumerate(value):
+                    st.write(f"\n{i+1}: {v}")
+            else:
+                st.write(value)
+    else:
+        st.warning("No response received from assistant.")
+
 
 # Render Calendar
 def render_calendar():
@@ -116,8 +142,9 @@ def render_calendar():
                     st.session_state["popup_date"] = f"{day}/{month}/{year}"
                     st.session_state["popup_open"] = True
 
+
 # Main Streamlit App
-st.title("Interactive Calendar")
+st.title("Muse - Your Audio Journal Assistant")
 
 # Session state initialization
 if "popup_open" not in st.session_state:
@@ -126,9 +153,9 @@ if "popup_date" not in st.session_state:
     st.session_state["popup_date"] = ""
 
 
-# Pop-up Dialog
+# Pop-up Dialog (Render on main screen)
 if st.session_state["popup_open"]:
-    with st.sidebar:  # Display the dialog as a sidebar
+    with st.container():  # This will ensure the dialog content renders in the main screen
         st.markdown(f"### Dialog for {st.session_state['popup_date']}")
         st.info("Choose one option below:")
         option = st.radio("Select an option:", ["Record Audio", "Upload Audio"])
@@ -148,4 +175,5 @@ if st.session_state["popup_open"]:
         if st.button("Close"):
             st.session_state["popup_open"] = False
 
+# Render the calendar at the end, so it's always visible
 render_calendar()

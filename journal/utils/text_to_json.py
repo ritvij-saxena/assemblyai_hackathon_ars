@@ -1,6 +1,7 @@
 import json
 
 def convert_text_to_json(text):
+    print(text)
     start_index = text.find("{")
     end_index = text.rfind("}") + 1
     json_string = text[start_index:end_index]
