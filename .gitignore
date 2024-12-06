@@ -1,0 +1,60 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+env/
+venv/
+ENV/
+.venv/
+
+# Cache files
+*.egg-info/
+.eggs/
+*.egg
+*.pickle
+*.log
+*.sqlite3
+.DS_Store
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Test and coverage reports
+htmlcov/
+.coverage
+.tox/
+.nox/
+*.cover
+*.py,cover
+.cache
+pytest_cache/
+nose2-*.xml
+
+# Build artifacts
+build/
+dist/
+*.wheel
+*.manifest
+*.spec
+
+# Editor-specific files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+*.~
+
+# Pylint and MyPy reports
+.mypy_cache/
+.pyre/
+.pytype/
+pylint-report.*
