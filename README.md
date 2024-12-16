@@ -1,4 +1,4 @@
-# Project Muse
+# Muse (Project ARS)
 
 We got second prize in the assembly AI hackathon: https://www.assemblyai.com/blog/top-speech-ai-projects-and-winners-at-2024-assemblyai-hackathon/
 
